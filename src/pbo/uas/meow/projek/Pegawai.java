@@ -9,7 +9,7 @@ public class Pegawai extends BaseModel{
     public Pegawai() throws SQLException {
         super();
     }
-    public void tambahPegawai(String namaPegawai, String jenisKelamin, String alamatPegawai, String kotaPegawai, String telpPegawai) throws  SQLException{
+    public int tambahPegawai(String namaPegawai, String jenisKelamin, String alamatPegawai, String kotaPegawai, String telpPegawai) throws  SQLException{
         String query = "INSERT INTO pegawai " +
                 "(nama_pegawai, jenis_kelamin, alamat_pegawai, kota_pegawai, telp_pegawai) " +
                 "VALUES (?,?,?,?,?)";
@@ -21,25 +21,30 @@ public class Pegawai extends BaseModel{
         preparedstatement.setString(4, kotaPegawai);
         preparedstatement.setString(5, telpPegawai);
         preparedstatement.executeUpdate();
+        return 0;
     }
-    public ResultSet lihatPegawai() throws SQLException{
+    public static ResultSet lihatPegawai() throws SQLException{
         String query = "SELECT * FROM pegawai";
         PreparedStatement preparedStatement = connection.prepareStatement(query);
         return preparedStatement.executeQuery();
     }
-    public void hapusPegawai(int idPegawai) throws SQLException{
-        String query = "DELETE FROM pegawai WHERE idPegawai = ? ";
-        Scanner input = new Scanner(System.in);
-        System.out.println("\nMasukkan Id Makanan yang akan dihapus : ");
-        idPegawai = input.nextInt();
-        PreparedStatement preparedStatement = connection.prepareStatement(query);
-        preparedStatement.setInt(1, idPegawai);
-        preparedStatement.executeUpdate();
+    public void hapusPegawai() throws SQLException{
+        String query = "DELETE FROM pegawai WHERE id_pegawai = ?";
+        int hasil = 0;
+        int id_pegawai;
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            Scanner input = new Scanner(System.in);
+            System.out.println("\nMasukkan Id pegawai yang akan dihapus : ");
+            id_pegawai = input.nextInt();
+            preparedStatement.setInt(1, id_pegawai);
+            hasil = preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("ERROR - Gagal menghapus data pegawai");
+        }
     }
-    public void ubahPegawai(String namaPegawai, String jenisKelamin, String alamatPegawai, String kotaPegawai, String telpPegawai) throws  SQLException{
-        String query = "UPDATE makanan SET " +
-                "(namaPegawai, jenisKelamin, alamatPegawai, kotaPegawai, telpPegawai) " +
-                "VALUES (?,?,?,?,?)";
+    public void ubahPegawai(int id_pegawai, String namaPegawai, String jenisKelamin, String alamatPegawai, String kotaPegawai, String telpPegawai) throws  SQLException{
+        String query = "UPDATE pegawai SET nama_pegawai = ?, jenis_kelamin = ?, alamat_pegawai = ?, kota_pegawai = ?, telp_pegawai = ? WHERE id_pegawai = ?";
 
         PreparedStatement preparedstatement = connection.prepareStatement(query);
         preparedstatement.setString(1, namaPegawai);
@@ -47,6 +52,7 @@ public class Pegawai extends BaseModel{
         preparedstatement.setString(3, alamatPegawai);
         preparedstatement.setString(4, kotaPegawai);
         preparedstatement.setString(5, telpPegawai);
+        preparedstatement.setInt(6, id_pegawai);
 
         preparedstatement.executeUpdate();
     }
